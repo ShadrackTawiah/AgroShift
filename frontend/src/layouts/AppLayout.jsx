@@ -6,7 +6,7 @@ import { supabase } from '../services/supabase'
 import './AppLayout.css'
 
 const navigation = [
-  { label: 'Home', path: '/', icon: '⌂' },
+  { label: 'Home', path: '/home', icon: '⌂' },
   { label: 'Dashboard', path: '/dashboard', icon: '▦' },
   { label: 'Farm Assessment', path: '/farm-assessment', icon: '⌖' },
   { label: 'Climate Insights', path: '/climate', icon: '☼' },
@@ -90,10 +90,11 @@ function AppLayout({ farmLocation, setFarmLocation }) {
       <aside className={`app-sidebar ${menuOpen ? 'sidebar-open' : ''}`}>
         <div className="sidebar-brand">
           <img
-  src="/images/logo.jpg"
-  alt="AgroShift Logo"
-  className="brand-logo"
-/>
+            src="/images/logo.jpg"
+            alt="AgroShift Logo"
+            className="brand-logo"
+          />
+
           <div>
             <h2>AgroShift</h2>
             <span>SMART AGRICULTURE</span>
@@ -109,7 +110,7 @@ function AppLayout({ farmLocation, setFarmLocation }) {
             <NavLink
               key={item.path}
               to={item.path}
-              end={item.path === '/'}
+              end={item.path === '/home'}
               onClick={closeMenu}
               className={({ isActive }) =>
                 `sidebar-link ${isActive ? 'active' : ''}`

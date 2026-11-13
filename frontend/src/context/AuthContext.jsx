@@ -18,25 +18,6 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let mounted = true
 
-    async function loadUser() {
-      const { data, error } = await supabase.auth.getSession()
-
-      if (error) {
-        console.error('Session error:', error.message)
-      }
-
-      if (mounted) {
-        const currentUser = data?.session?.user ?? null
-        setUser(currentUser)
-
-        if (currentUser) {
-          await loadProfile(currentUser.id)
-        }
-
-        setLoading(false)
-      }
-    }
-
     async function loadProfile(userId) {
       const { data, error } = await supabase
         .from('profiles')
@@ -53,6 +34,26 @@ export function AuthProvider({ children }) {
       }
     }
 
+    async function loadUser() {
+      const { data, error } = await supabase.auth.getSession()
+
+      if (error) {
+        console.error('Session error:', error.message)
+      }
+
+      if (mounted) {
+        const currentUser = data?.session?.user ?? null
+
+        setUser(currentUser)
+
+        if (currentUser) {
+          await loadProfile(currentUser.id)
+        }
+
+        setLoading(false)
+      }
+    }
+
     loadUser()
 
     const {
@@ -61,6 +62,7 @@ export function AuthProvider({ children }) {
       if (!mounted) return
 
       const currentUser = session?.user ?? null
+
       setUser(currentUser)
 
       if (event === 'SIGNED_OUT') {
@@ -84,6 +86,7 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
+  // Register a new user and send the email confirmation link.
   async function signUp({ email, password, fullName }) {
     return await supabase.auth.signUp({
       email,
@@ -92,11 +95,12 @@ export function AuthProvider({ children }) {
         data: {
           full_name: fullName,
         },
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: `${window.location.origin}/`,
       },
     })
   }
 
+  // Sign in an existing user.
   async function signIn({ email, password }) {
     return await supabase.auth.signInWithPassword({
       email,
@@ -104,10 +108,12 @@ export function AuthProvider({ children }) {
     })
   }
 
+  // Sign out the current user.
   async function signOut() {
     return await supabase.auth.signOut()
   }
 
+  // Refresh the user's profile.
   async function refreshProfile() {
     if (!user) return
 

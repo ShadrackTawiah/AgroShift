@@ -10,23 +10,38 @@ function Login() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   async function handleSubmit(event) {
     event.preventDefault()
+
     setError('')
     setLoading(true)
 
-    const { error } = await signIn({ email, password })
+    try {
+      const { error } = await signIn({
+        email: email.trim(),
+        password,
+      })
 
-    if (error) {
-      setError(error.message)
+      if (error) {
+        setError(
+          error.message === 'Email not confirmed'
+            ? 'Please confirm your email address before signing in. Check your inbox for the confirmation link.'
+            : error.message
+        )
+        return
+      }
+
+      navigate('/dashboard', { replace: true })
+    } catch (err) {
+      console.error('Login error:', err)
+      setError('Unable to sign in right now. Please try again.')
+    } finally {
       setLoading(false)
-      return
     }
-
-    navigate('/dashboard', { replace: true })
   }
 
   return (
@@ -43,7 +58,9 @@ function Login() {
         <div className="auth-heading">
           <span className="auth-eyebrow">FARMER ACCOUNT</span>
           <h1>Welcome back</h1>
-          <p>Sign in to manage your farm and access your agricultural insights.</p>
+          <p>
+            Sign in to manage your farm and access your agricultural insights.
+          </p>
         </div>
 
         {error && (
@@ -54,6 +71,7 @@ function Login() {
 
         <form onSubmit={handleSubmit}>
           <label htmlFor="login-email">Email address</label>
+
           <input
             id="login-email"
             type="email"
@@ -65,15 +83,38 @@ function Login() {
           />
 
           <label htmlFor="login-password">Password</label>
-          <input
-            id="login-password"
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            autoComplete="current-password"
-            required
-          />
+
+          <div style={{ position: 'relative' }}>
+            <input
+              id="login-password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Enter your password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              autoComplete="current-password"
+              required
+              style={{ width: '100%', paddingRight: '48px' }}
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '19px',
+                padding: '5px',
+              }}
+            >
+              {showPassword ? '🙈' : '👁'}
+            </button>
+          </div>
 
           <button type="submit" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign In'}
@@ -82,6 +123,10 @@ function Login() {
 
         <p className="auth-switch">
           Don't have an account? <Link to="/register">Create an account</Link>
+        </p>
+
+        <p className="auth-switch">
+          <Link to="/">Back to AgroShift Home</Link>
         </p>
       </div>
     </div>

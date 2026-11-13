@@ -8,6 +8,7 @@ import {
 
 import AppLayout from './layouts/AppLayout'
 
+import Landing from './pages/Landing'
 import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import FarmAssessment from './pages/FarmAssessment'
@@ -37,9 +38,12 @@ function AppRoutes() {
 
   return (
     <Routes>
+      {/* Public pages */}
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
+      {/* Protected application pages */}
       <Route element={<ProtectedRoute />}>
         <Route
           element={
@@ -49,16 +53,18 @@ function AppRoutes() {
             />
           }
         >
-          <Route index element={<Home />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="farm-assessment" element={<FarmAssessment />} />
-          <Route path="climate" element={<ClimateInsights />} />
-          <Route path="crop-planner" element={<CropPlanner />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/farm-assessment" element={<FarmAssessment />} />
+          <Route path="/climate" element={<ClimateInsights />} />
+          <Route path="/crop-planner" element={<CropPlanner />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Route>
+
+      {/* Public fallback */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }
