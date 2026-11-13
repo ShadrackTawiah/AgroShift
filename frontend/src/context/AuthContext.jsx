@@ -92,6 +92,7 @@ export function AuthProvider({ children }) {
         data: {
           full_name: fullName,
         },
+        emailRedirectTo: window.location.origin,
       },
     })
   }

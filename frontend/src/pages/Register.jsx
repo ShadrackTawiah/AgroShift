@@ -1,5 +1,5 @@
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import './Auth.css'
@@ -16,8 +16,20 @@ function Register() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
+  // Clear all registration fields whenever this page opens.
+  useEffect(() => {
+    setFullName('')
+    setEmail('')
+    setPassword('')
+    setConfirmPassword('')
+    setError('')
+    setSuccess('')
+    setLoading(false)
+  }, [])
+
   async function handleSubmit(event) {
     event.preventDefault()
+
     setError('')
     setSuccess('')
 
@@ -33,24 +45,35 @@ function Register() {
 
     setLoading(true)
 
-    const { data, error } = await signUp({
-      email,
-      password,
-      fullName,
-    })
+    try {
+      const { data, error } = await signUp({
+        email: email.trim(),
+        password,
+        fullName: fullName.trim(),
+      })
 
-    if (error) {
-      setError(error.message)
-      setLoading(false)
-      return
-    }
+      if (error) {
+        setError(error.message)
+        return
+      }
 
-    if (data.session) {
-      navigate('/dashboard', { replace: true })
-    } else {
-      setSuccess(
-        'Your account has been created. Check your email to confirm your account before signing in.'
-      )
+      // Clear all fields after successful registration.
+      setFullName('')
+      setEmail('')
+      setPassword('')
+      setConfirmPassword('')
+
+      if (data.session) {
+        navigate('/dashboard', { replace: true })
+      } else {
+        setSuccess(
+          'Your account has been created. Check your email to confirm your account before signing in.'
+        )
+      }
+    } catch (err) {
+      console.error('Registration error:', err)
+      setError('Something went wrong. Please try again.')
+    } finally {
       setLoading(false)
     }
   }
@@ -69,7 +92,9 @@ function Register() {
         <div className="auth-heading">
           <span className="auth-eyebrow">JOIN AGROSHIFT</span>
           <h1>Create your account</h1>
-          <p>Set up your farmer account to manage your farm digitally.</p>
+          <p>
+            Set up your farmer account to manage your farm digitally.
+          </p>
         </div>
 
         {error && (
@@ -119,7 +144,9 @@ function Register() {
             required
           />
 
-          <label htmlFor="register-confirm-password">Confirm password</label>
+          <label htmlFor="register-confirm-password">
+            Confirm password
+          </label>
           <input
             id="register-confirm-password"
             type="password"
