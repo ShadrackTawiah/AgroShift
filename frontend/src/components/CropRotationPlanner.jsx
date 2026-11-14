@@ -1,9 +1,12 @@
 
 import { useState } from 'react'
+import { useAuth } from '../context/AuthContext'
+import { supabase } from '../services/supabase'
 import './CropRotationPlanner.css'
 
 const API_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+
 function getClimateDateRange() {
   const today = new Date()
   const yesterday = new Date(today)
@@ -23,6 +26,8 @@ function getClimateDateRange() {
 }
 
 function CropRotationPlanner({ latitude, longitude }) {
+  const { user } = useAuth()
+
   const [previousCrop, setPreviousCrop] = useState('maize')
   const [priority, setPriority] = useState('soil_improvement')
   const [waterAvailability, setWaterAvailability] = useState('medium')
@@ -31,14 +36,24 @@ function CropRotationPlanner({ latitude, longitude }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [climateMessage, setClimateMessage] = useState('')
+  const [saveMessage, setSaveMessage] = useState('')
+  const [saving, setSaving] = useState(false)
 
   async function handleSubmit(event) {
     event.preventDefault()
+
+    if (!user?.id) {
+      setError('Please sign in before generating an assessment.')
+      return
+    }
 
     setLoading(true)
     setError('')
     setRecommendations([])
     setNotice('')
+    setClimateMessage('')
+    setSaveMessage('')
+
     setClimateMessage('Retrieving NASA climate information...')
 
     try {
@@ -110,7 +125,7 @@ function CropRotationPlanner({ latitude, longitude }) {
         )
       }
 
-      // Send farm and climate information to the crop rotation API.
+      // Generate crop rotation recommendations.
       const response = await fetch(
         `${API_URL}/api/crop-rotation/recommend`,
         {
@@ -138,12 +153,52 @@ function CropRotationPlanner({ latitude, longitude }) {
         )
       }
 
-      setRecommendations(result.result.recommendations || [])
-      setNotice(result.result.notice || '')
+      const generatedRecommendations =
+        result.result?.recommendations || []
+
+      const generatedNotice = result.result?.notice || ''
+
+      if (generatedRecommendations.length === 0) {
+        throw new Error(
+          'The server did not return any crop recommendations.'
+        )
+      }
+
+      setRecommendations(generatedRecommendations)
+      setNotice(generatedNotice)
 
       if (!climateSummary) {
         setClimateMessage(
           'Recommendations generated without NASA climate information.'
+        )
+      }
+
+      // Save the completed assessment to Supabase.
+      setSaving(true)
+
+      const { error: saveError } = await supabase
+        .from('farm_assessments')
+        .insert({
+          user_id: user.id,
+          latitude,
+          longitude,
+          previous_crop: previousCrop,
+          priority,
+          water_availability: waterAvailability,
+          climate_summary: climateSummary,
+          crop_recommendations: generatedRecommendations,
+          assessment_notice: generatedNotice,
+        })
+
+      if (saveError) {
+        console.error('Assessment saving error:', saveError.message)
+
+        setSaveMessage(
+          'Recommendations generated, but the assessment could not be saved. Please try again later.'
+        )
+      } else {
+        setSaveMessage(
+          'Assessment completed and saved successfully to your report history.'
         )
       }
     } catch (err) {
@@ -152,6 +207,7 @@ function CropRotationPlanner({ latitude, longitude }) {
       )
     } finally {
       setLoading(false)
+      setSaving(false)
     }
   }
 
@@ -243,7 +299,7 @@ function CropRotationPlanner({ latitude, longitude }) {
           <button
             type="submit"
             className="planner-submit"
-            disabled={loading}
+            disabled={loading || saving}
           >
             {loading
               ? 'Analysing your farm...'
@@ -253,7 +309,7 @@ function CropRotationPlanner({ latitude, longitude }) {
 
           <p className="planner-form-note">
             AgroShift retrieves NASA POWER climate information and
-            includes the climate summary in your recommendation request.
+            saves completed recommendations to your assessment history.
           </p>
         </form>
 
@@ -269,6 +325,18 @@ function CropRotationPlanner({ latitude, longitude }) {
 
           {climateMessage && (
             <p className="planner-form-note">{climateMessage}</p>
+          )}
+
+          {saveMessage && (
+            <div className="planner-notice">
+              {saveMessage}
+            </div>
+          )}
+
+          {saving && (
+            <p className="planner-form-note">
+              Saving your assessment...
+            </p>
           )}
 
           {loading && (
@@ -302,7 +370,7 @@ function CropRotationPlanner({ latitude, longitude }) {
               {recommendations.map((crop, index) => (
                 <article
                   className="recommendation-card"
-                  key={crop.crop_id}
+                  key={crop.crop_id || index}
                 >
                   <div className="recommendation-rank">
                     {String(index + 1).padStart(2, '0')}
@@ -316,31 +384,31 @@ function CropRotationPlanner({ latitude, longitude }) {
                     </span>
 
                     <ul>
-                      {crop.reasons.map((reason, reasonIndex) => (
+                      {(crop.reasons || []).map((reason, reasonIndex) => (
                         <li key={reasonIndex}>{reason}</li>
                       ))}
                     </ul>
                   </div>
 
-<div className="recommendation-score">
-  <strong>{crop.score}</strong>
-  <span>Total Points</span>
+                  <div className="recommendation-score">
+                    <strong>{crop.score}</strong>
+                    <span>Total Points</span>
 
-  {typeof crop.climate_adjustment === 'number' && (
-    <span
-      className={`climate-adjustment ${
-        crop.climate_adjustment > 0
-          ? 'positive'
-          : crop.climate_adjustment < 0
-            ? 'negative'
-            : 'neutral'
-      }`}
-    >
-      Climate: {crop.climate_adjustment > 0 ? '+' : ''}
-      {crop.climate_adjustment}
-    </span>
-  )}
-</div>
+                    {typeof crop.climate_adjustment === 'number' && (
+                      <span
+                        className={`climate-adjustment ${
+                          crop.climate_adjustment > 0
+                            ? 'positive'
+                            : crop.climate_adjustment < 0
+                              ? 'negative'
+                              : 'neutral'
+                        }`}
+                      >
+                        Climate: {crop.climate_adjustment > 0 ? '+' : ''}
+                        {crop.climate_adjustment}
+                      </span>
+                    )}
+                  </div>
                 </article>
               ))}
             </div>
