@@ -1,4 +1,4 @@
-
+import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -6,7 +6,7 @@ import { supabase } from '../services/supabase'
 import './AppLayout.css'
 
 const navigation = [
-  { label: 'Home', path: '/home', icon: '⌂' },
+  { label: 'AgroShift', path: '/home', icon: '⌂' },
   { label: 'Dashboard', path: '/dashboard', icon: '▦' },
   { label: 'Farm Assessment', path: '/farm-assessment', icon: '⌖' },
   { label: 'Climate Insights', path: '/climate', icon: '☼' },
@@ -86,21 +86,19 @@ function AppLayout({ farmLocation, setFarmLocation }) {
           onClick={closeMenu}
         />
       )}
+<aside className={`app-sidebar ${menuOpen ? 'sidebar-open' : ''}`}>
+  <Link to="/" className="sidebar-brand">
+    <img
+      src="/images/logo.jpeg"
+      alt="AgroShift Logo"
+      className="brand-logo"
+    />
 
-      <aside className={`app-sidebar ${menuOpen ? 'sidebar-open' : ''}`}>
-        <div className="sidebar-brand">
-          <img
-            src="/images/logo.jpg"
-            alt="AgroShift Logo"
-            className="brand-logo"
-          />
-
-          <div>
-            <h2>AgroShift</h2>
-            <span>SMART AGRICULTURE</span>
-          </div>
-        </div>
-
+    <div>
+      <h2>AgroShift</h2>
+      <span>SMART AGRICULTURE</span>
+    </div>
+  </Link>
         <div className="sidebar-section-label">
           WORKSPACE
         </div>

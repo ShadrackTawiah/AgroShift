@@ -30,11 +30,11 @@ const features = [
 ]
 
 const advertisements = [
-  '🌱 Welcome to AgroShift — Smarter tools for better farming decisions.',
-  '🌦️ Explore climate observations powered by NASA POWER.',
-  '🚜 Assess your farm location and understand its environmental conditions.',
-  '🌾 Discover crop rotation options for more informed farming.',
-  '📊 Use environmental information to support your agricultural planning.',
+  ' Welcome to AgroShift — Smarter tools for better farming decisions.',
+  ' Explore climate observations powered by NASA POWER.',
+  ' Assess your farm location and understand its environmental conditions.',
+  ' Discover crop rotation options for more informed farming.',
+  ' Use environmental information to support your agricultural planning.',
 ]
 
 function Home() {

@@ -1,5 +1,5 @@
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import './Landing.css'
 
@@ -40,48 +40,7 @@ const features = [
 
 function Landing() {
   const videoRef = useRef(null)
-  const videoSectionRef = useRef(null)
-  const [isMuted, setIsMuted] = useState(true)
   const [videoError, setVideoError] = useState(false)
-
-  useEffect(() => {
-    const video = videoRef.current
-    const section = videoSectionRef.current
-
-    if (!video || !section) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            video.play().catch(() => {
-              // The visitor can start playback manually if autoplay is blocked.
-            })
-          } else {
-            video.pause()
-          }
-        })
-      },
-      { threshold: 0.35 }
-    )
-
-    observer.observe(section)
-
-    return () => observer.disconnect()
-  }, [])
-
-  function toggleSound() {
-    const video = videoRef.current
-    if (!video) return
-
-    const nextMuted = !isMuted
-    video.muted = nextMuted
-    setIsMuted(nextMuted)
-
-    if (!nextMuted) {
-      video.play().catch(() => {})
-    }
-  }
 
   return (
     <div className="landing-page">
@@ -160,10 +119,10 @@ function Landing() {
               <span className="landing-live-label">● SMART FARMING</span>
             </div>
 
-            <div className="landing-hero-card-icon">🌍</div>
-
             <h3>Understand your farm.</h3>
-            <p>Explore environmental information and plan your next steps.</p>
+            <p>
+              Explore environmental information and plan your next steps.
+            </p>
 
             <div className="landing-hero-card-footer">
               <span>Climate data</span>
@@ -227,7 +186,10 @@ function Landing() {
             {features.map((feature) => (
               <article className="landing-feature-card" key={feature.number}>
                 <div className="landing-feature-top">
-                  <span className="landing-feature-icon">{feature.icon}</span>
+                  <span className="landing-feature-icon">
+                    {feature.icon}
+                  </span>
+
                   <span className="landing-feature-number">
                     {feature.number}
                   </span>
@@ -245,11 +207,7 @@ function Landing() {
         </section>
 
         {/* VIDEO TUTORIAL */}
-        <section
-          className="landing-tutorial"
-          id="tutorial"
-          ref={videoSectionRef}
-        >
+        <section className="landing-tutorial" id="tutorial">
           <div className="landing-tutorial-heading">
             <span className="landing-section-label">
               YOUR GUIDE TO AGROSHIFT
@@ -273,10 +231,8 @@ function Landing() {
                 ref={videoRef}
                 className="landing-video"
                 src="/videos/landing%20video.mp4"
-                muted
-                autoPlay
-                playsInline
                 controls
+                playsInline
                 preload="metadata"
                 onError={() => setVideoError(true)}
               >
@@ -290,17 +246,6 @@ function Landing() {
                   AgroShift website.
                 </p>
               </div>
-            )}
-
-            {!videoError && (
-              <button
-                type="button"
-                className="landing-sound-button"
-                onClick={toggleSound}
-                aria-label={isMuted ? 'Turn sound on' : 'Mute video'}
-              >
-                {isMuted ? '🔇 Turn Sound On' : '🔊 Mute Sound'}
-              </button>
             )}
           </div>
 
@@ -453,6 +398,17 @@ function Landing() {
         <span className="landing-copyright">
           © {new Date().getFullYear()} AgroShift. All rights reserved.
         </span>
+
+        <p className="landing-developer-credit">
+          Designed &amp; Developed by{' '}
+          <a
+            href="https://skofieldjunior.live"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            SkofieldJunior
+          </a>
+        </p>
       </footer>
 
     </div>
