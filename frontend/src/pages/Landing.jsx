@@ -6,7 +6,7 @@ import './Landing.css'
 const features = [
   {
     number: '01',
-    icon: '🌦️',
+    icon: '',
     title: 'Climate Insights',
     description:
       'Explore rainfall, temperature and solar radiation observations using NASA POWER climate data.',
@@ -14,7 +14,7 @@ const features = [
   },
   {
     number: '02',
-    icon: '🌱',
+    icon: '',
     title: 'Farm Assessment',
     description:
       'Select your farm location and use geographical coordinates to explore relevant environmental information.',
@@ -22,7 +22,7 @@ const features = [
   },
   {
     number: '03',
-    icon: '🌾',
+    icon: '',
     title: 'Crop Rotation Advisor',
     description:
       'Explore crop rotation recommendations using available climate information and agricultural knowledge.',
@@ -30,7 +30,7 @@ const features = [
   },
   {
     number: '04',
-    icon: '📊',
+    icon: '',
     title: 'Agricultural Reports',
     description:
       'Access information and reports that help you understand your farm assessment and planning.',

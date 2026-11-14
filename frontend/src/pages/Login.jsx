@@ -1,4 +1,6 @@
 
+
+
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -11,6 +13,7 @@ function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -45,91 +48,130 @@ function Login() {
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <Link to="/" className="auth-brand">
-          <span className="auth-brand-mark">A</span>
-          <span>
-            <strong>AgroShift</strong>
-            <small>SMART AGRICULTURE</small>
-          </span>
-        </Link>
+    <main className="login-page">
+      <div className="login-background-glow login-glow-one" />
+      <div className="login-background-glow login-glow-two" />
 
-        <div className="auth-heading">
-          <span className="auth-eyebrow">FARMER ACCOUNT</span>
-          <h1>Welcome back</h1>
+      <Link to="/" className="login-brand">
+        <span className="login-brand-mark">A</span>
+        <span className="login-brand-name">
+          <strong>AgroShift</strong>
+          <small>SMART AGRICULTURE</small>
+        </span>
+      </Link>
+
+      <section className="login-glass-card">
+        <div className="login-card-heading">
+          <span className="login-eyebrow">WELCOME TO AGROSHIFT</span>
+          <h1>Login</h1>
           <p>
-            Sign in to manage your farm and access your agricultural insights.
+            Welcome back. Sign in to manage your farm and make smarter
+            agricultural decisions.
           </p>
         </div>
 
         {error && (
-          <div className="auth-error" role="alert">
+          <div className="login-error" role="alert">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="login-email">Email address</label>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="login-form-group">
+            <label htmlFor="login-email">Email address</label>
 
-          <input
-            id="login-email"
-            type="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            autoComplete="email"
-            required
-          />
+            <div className="login-input-wrap">
+              <input
+                id="login-email"
+                type="email"
+                placeholder="Email ID"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                autoComplete="email"
+                required
+              />
 
-          <label htmlFor="login-password">Password</label>
-
-          <div style={{ position: 'relative' }}>
-            <input
-              id="login-password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Enter your password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              autoComplete="current-password"
-              required
-              style={{ width: '100%', paddingRight: '48px' }}
-            />
-
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-              style={{
-                position: 'absolute',
-                right: '12px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '19px',
-                padding: '5px',
-              }}
-            >
-              {showPassword ? '🙈' : '👁'}
-            </button>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="3" />
+                <path d="m4 7 8 6 8-6" />
+              </svg>
+            </div>
           </div>
 
-          <button type="submit" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
+          <div className="login-form-group">
+            <label htmlFor="login-password">Password</label>
+
+            <div className="login-input-wrap">
+              <input
+                id="login-password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                autoComplete="current-password"
+                required
+              />
+
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="4" y="10" width="16" height="11" rx="2" />
+                <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                <path d="M12 14v3" />
+              </svg>
+
+              <button
+                type="button"
+                className="login-password-toggle"
+                onClick={() => setShowPassword((previous) => !previous)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-pressed={showPassword}
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
+          </div>
+
+          <div className="login-options">
+            <label className="login-remember">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(event) => setRememberMe(event.target.checked)}
+              />
+              <span>Remember me</span>
+            </label>
+
+            <span className="login-secure-note">Secure sign in</span>
+          </div>
+
+          <button
+            type="submit"
+            className="login-submit"
+            disabled={loading}
+          >
+            {loading ? 'Signing in...' : 'Login'}
           </button>
         </form>
 
-        <p className="auth-switch">
-          Don't have an account? <Link to="/register">Create an account</Link>
+        <div className="login-divider">
+          <span />
+          <small>NEW TO AGROSHIFT?</small>
+          <span />
+        </div>
+
+        <p className="login-register-link">
+          Don't have an account?{' '}
+          <Link to="/register">Create Account</Link>
         </p>
 
-        <p className="auth-switch">
-          <Link to="/">Back to AgroShift Home</Link>
-        </p>
-      </div>
-    </div>
+        <Link to="/" className="login-back-home">
+          Back to AgroShift Home
+        </Link>
+      </section>
+
+      <p className="login-page-footer">
+        Grow smarter. Farm for tomorrow.
+      </p>
+    </main>
   )
 }
 

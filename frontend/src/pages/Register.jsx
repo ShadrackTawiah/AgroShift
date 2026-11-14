@@ -1,4 +1,6 @@
 
+
+
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -19,7 +21,6 @@ function Register() {
 
   async function handleSubmit(event) {
     event.preventDefault()
-
     setError('')
 
     if (password.length < 8) {
@@ -46,7 +47,6 @@ function Register() {
         return
       }
 
-      // Supabase can return an existing account without an error.
       if (data?.user?.identities?.length === 0) {
         setError(
           'An account with this email may already exist. Please sign in or use another email address.'
@@ -78,212 +78,285 @@ function Register() {
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <Link to="/" className="auth-brand">
-          <span className="auth-brand-mark">A</span>
-          <span>
-            <strong>AgroShift</strong>
-            <small>SMART AGRICULTURE</small>
-          </span>
-        </Link>
+    <main className="register-page">
+      <div className="register-background-glow">
+        <span className="register-glow-one" />
+        <span className="register-glow-two" />
+      </div>
 
+      <Link to="/" className="register-brand">
+        <span className="register-brand-mark">A</span>
+        <span className="register-brand-name">
+          <strong>AgroShift</strong>
+          <small>SMART AGRICULTURE</small>
+        </span>
+      </Link>
+
+      <section className="register-glass-card">
         {verificationSent ? (
-          <div className="auth-heading">
-            <span className="auth-eyebrow">EMAIL VERIFICATION</span>
+          <div className="register-verification">
+            <span className="register-eyebrow">EMAIL VERIFICATION</span>
 
-            <div
-              style={{
-                width: '64px',
-                height: '64px',
-                margin: '20px auto',
-                borderRadius: '50%',
-                background: '#e8f5e9',
-                color: '#166534',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '30px',
-              }}
-            >
-              ✉
+            <div className="register-verification-icon">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect
+                  x="3"
+                  y="5"
+                  width="18"
+                  height="14"
+                  rx="3"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                />
+                <path
+                  d="M4 7L12 13L20 7"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </div>
 
             <h1>Verify your email</h1>
 
-            <p>
+            <p className="register-description">
               Your AgroShift registration has been received.
             </p>
 
-            <div className="auth-success" role="status">
+            <div className="register-success" role="status">
               Check your inbox for a confirmation email sent to:
-              <strong style={{ display: 'block', marginTop: '8px' }}>
-                {email.trim()}
-              </strong>
+              <strong>{email.trim()}</strong>
             </div>
 
-            <p style={{ marginTop: '20px' }}>
-              Open the email and click the
-              <strong> Confirm Email </strong>
+            <p className="register-verification-text">
+              Open the email and click the <strong>Confirm Email</strong>{' '}
               button to verify your account.
             </p>
 
-            <p style={{ marginTop: '12px' }}>
+            <p className="register-verification-text">
               After confirmation, you will be redirected to the AgroShift
               landing page. You can then sign in to access your farming tools.
             </p>
 
-            <p style={{ marginTop: '12px', fontSize: '13px' }}>
+            <p className="register-spam-note">
               Can't find the email? Check your spam or junk folder.
             </p>
 
-            <Link
-              to="/login"
-              className="auth-verification-link"
-              style={{
-                display: 'block',
-                marginTop: '24px',
-                padding: '13px',
-                borderRadius: '10px',
-                background: '#14532d',
-                color: '#ffffff',
-                textAlign: 'center',
-                textDecoration: 'none',
-                fontWeight: '600',
-              }}
-            >
+            <Link to="/login" className="register-submit">
               Continue to Sign In
             </Link>
           </div>
         ) : (
           <>
-            <div className="auth-heading">
-              <span className="auth-eyebrow">JOIN AGROSHIFT</span>
+            <div className="register-heading">
+              <span className="register-eyebrow">JOIN AGROSHIFT</span>
               <h1>Create your account</h1>
-              <p>
-                Set up your farmer account to manage your farm digitally.
+              <p className="register-description">
+                Set up your farmer account and manage your farm digitally.
               </p>
             </div>
 
             {error && (
-              <div className="auth-error" role="alert">
+              <div className="register-error" role="alert">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleSubmit}>
-              <label htmlFor="register-name">Full name</label>
-              <input
-                id="register-name"
-                type="text"
-                placeholder="Enter your full name"
-                value={fullName}
-                onChange={(event) => setFullName(event.target.value)}
-                autoComplete="name"
-                required
-              />
+            <form className="register-form" onSubmit={handleSubmit}>
+              <div className="register-form-group">
+                <label htmlFor="register-name">Full name</label>
 
-              <label htmlFor="register-email">Email address</label>
-              <input
-                id="register-email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                autoComplete="email"
-                required
-              />
+                <div className="register-input-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle
+                      cx="12"
+                      cy="8"
+                      r="3.5"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                    />
+                    <path
+                      d="M5 20C5 16.7 8.1 14.5 12 14.5C15.9 14.5 19 16.7 19 20"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      strokeLinecap="round"
+                    />
+                  </svg>
 
-              <label htmlFor="register-password">Password</label>
-
-              <div style={{ position: 'relative' }}>
-                <input
-                  id="register-password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="At least 8 characters"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  autoComplete="new-password"
-                  minLength={8}
-                  required
-                  style={{ width: '100%', paddingRight: '48px' }}
-                />
-
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  style={{
-                    position: 'absolute',
-                    right: '12px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    background: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '19px',
-                    padding: '5px',
-                  }}
-                >
-                  {showPassword ? '🙈' : '👁'}
-                </button>
+                  <input
+                    id="register-name"
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={fullName}
+                    onChange={(event) => setFullName(event.target.value)}
+                    autoComplete="name"
+                    required
+                  />
+                </div>
               </div>
 
-              <label htmlFor="register-confirm-password">
-                Confirm password
-              </label>
+              <div className="register-form-group">
+                <label htmlFor="register-email">Email address</label>
 
-              <div style={{ position: 'relative' }}>
-                <input
-                  id="register-confirm-password"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="Enter your password again"
-                  value={confirmPassword}
-                  onChange={(event) => setConfirmPassword(event.target.value)}
-                  autoComplete="new-password"
-                  minLength={8}
-                  required
-                  style={{ width: '100%', paddingRight: '48px' }}
-                />
+                <div className="register-input-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect
+                      x="3"
+                      y="5"
+                      width="18"
+                      height="14"
+                      rx="3"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                    />
+                    <path
+                      d="M4 7L12 13L20 7"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      strokeLinecap="round"
+                    />
+                  </svg>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowConfirmPassword(!showConfirmPassword)
-                  }
-                  aria-label={
-                    showConfirmPassword
-                      ? 'Hide confirm password'
-                      : 'Show confirm password'
-                  }
-                  style={{
-                    position: 'absolute',
-                    right: '12px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    background: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '19px',
-                    padding: '5px',
-                  }}
-                >
-                  {showConfirmPassword ? '🙈' : '👁'}
-                </button>
+                  <input
+                    id="register-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    autoComplete="email"
+                    required
+                  />
+                </div>
               </div>
 
-              <button type="submit" disabled={loading}>
+              <div className="register-form-group">
+                <label htmlFor="register-password">Password</label>
+
+                <div className="register-input-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect
+                      x="4"
+                      y="10"
+                      width="16"
+                      height="11"
+                      rx="2.5"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                    />
+                    <path
+                      d="M8 10V7a4 4 0 018 0v3"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+
+                  <input
+                    id="register-password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="At least 8 characters"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    autoComplete="new-password"
+                    minLength={8}
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    className="register-password-toggle"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? 'Hide' : 'Show'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="register-form-group">
+                <label htmlFor="register-confirm-password">
+                  Confirm password
+                </label>
+
+                <div className="register-input-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect
+                      x="4"
+                      y="10"
+                      width="16"
+                      height="11"
+                      rx="2.5"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                    />
+                    <path
+                      d="M8 10V7a4 4 0 018 0v3"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+
+                  <input
+                    id="register-confirm-password"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    placeholder="Enter your password again"
+                    value={confirmPassword}
+                    onChange={(event) =>
+                      setConfirmPassword(event.target.value)
+                    }
+                    autoComplete="new-password"
+                    minLength={8}
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    className="register-password-toggle"
+                    onClick={() =>
+                      setShowConfirmPassword(!showConfirmPassword)
+                    }
+                    aria-label={
+                      showConfirmPassword
+                        ? 'Hide confirm password'
+                        : 'Show confirm password'
+                    }
+                  >
+                    {showConfirmPassword ? 'Hide' : 'Show'}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="register-submit"
+                disabled={loading}
+              >
                 {loading ? 'Creating account...' : 'Create Account'}
+                {!loading && <span aria-hidden="true">→</span>}
               </button>
             </form>
 
-            <p className="auth-switch">
+            <div className="register-divider">
+              <span>ALREADY REGISTERED?</span>
+            </div>
+
+            <p className="register-login-link">
               Already have an account? <Link to="/login">Sign in</Link>
             </p>
           </>
         )}
-      </div>
-    </div>
+      </section>
+
+      <Link to="/" className="register-back-home">
+        ← Back to AgroShift Home
+      </Link>
+
+      <footer className="register-footer">
+        Grow smarter. Farm for tomorrow.
+      </footer>
+    </main>
   )
 }
 
