@@ -38,7 +38,7 @@ function Login() {
         return
       }
 
-      navigate('/dashboard', { replace: true })
+      navigate('/home', { replace: true })
     } catch (err) {
       console.error('Login error:', err)
       setError('Unable to sign in right now. Please try again.')
